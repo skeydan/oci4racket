@@ -4,6 +4,7 @@
 (require rackunit/text-ui)
 (require "defs.rkt")
 (require "sugar.rkt")
+(require "utils.rkt")
 
 (define conn #f)
 (define stmt #f)
@@ -38,7 +39,7 @@
    (check-true (prepare stmt "select * from user_tables"))
    (check-true (execute stmt)))
   (test-case
-   "prepare and execute in 2 steps"
+   "prepare and execute in 1 step"
    (check-true (executestmt stmt "select * from user_tables")))))
 
 (define fetch-test
@@ -70,8 +71,9 @@
             (fetchnext result) (fetchnext result) (check-equal? (getrowcount result) 2))))
   (test-case
    "prefetch size"
-   (printf "prefetch size: ~s~n" (getprefetchsize stmt))))) ; how (and whether to) test this??
-
+   (printf "prefetch size: ~s~n" (getprefetchsize stmt))) ; how (and whether to) test this??
+ ))
+       
 (define bind-test
  (test-suite
   "Bind variables"
@@ -132,16 +134,16 @@
    (let ((dtptr (datecreate conn)))
      (let ((res (datefromtext dtptr "2011-05-25" "yyyy-mm-dd")))
        (check-true res)
-       (let-values (((year month day res) (getdate dtptr)))
+       (let-values (((year month day) (dategetdate dtptr)))
          (check-equal? 2011 year) (check-equal? 5 month) (check-equal? 25 day)
-         (let ((res (setdatetime dtptr 2011 9 18 8 22 4)))
+         (let ((res (datesetdatetime dtptr 2011 9 18 8 22 4)))
            (check-true res)
-           (let-values (((year month day hour min sec res) (getdatetime dtptr)))
+           (let-values (((year month day hour min sec) (dategetdatetime dtptr)))
              (check-equal? 2011 year) (check-equal? 9 month) (check-equal? 18 day) (check-equal? 8 hour) (check-equal? 22 min) (check-equal? 4 sec)
              (let ((text (datetotext dtptr "yyyy-mm-dd hh24:mi:ss" 30)))
                (check-equal? text "2011-09-18 08:22:04"))
              (let ((res (sysdate dtptr)))
-               (let-values (((year month day res) (getdate dtptr)))
+               (let-values (((year month day) (dategetdate dtptr)))
                  (check-equal? (date-day (seconds->date (current-seconds))) day)
                  (check-true (datefree dtptr))))))))))
   (test-case
@@ -149,8 +151,8 @@
    (let ((tsptr (timestampcreate conn 'oci_timestamp_tz)))
      (check-equal? (timestampgettype tsptr) 'oci_timestamp_tz)
      (let ((res (systimestamp tsptr)))
-       (let-values (((text result) (timestamptotext tsptr "DD/MM/YYYY HH24:MI:SS:FF3" 100 3)))
-         (display text) (check-true result)
+       (let-values (((text) (timestamptotext tsptr "DD/MM/YYYY HH24:MI:SS:FF3" 100 3)))
+         (display text)
          (check-true (timestampfree tsptr))))))))
   
   
@@ -162,9 +164,11 @@
 ;   (test-case
 ;   "number->string"
 
-(for-each (lambda (test) (run-tests test)) (list library-metadata-test
-                                                 connection-test
-                                                 execution-test
-                                                 fetch-test
-                                                 bind-test
-                                                 date&timestamp-test))
+(parameterize ((log-level (bitwise-ior 1 2 4)))
+  (for-each (lambda (test) (run-tests test)) (list library-metadata-test
+                                                   connection-test
+                                                   execution-test
+                                                   fetch-test
+                                                   bind-test
+                                                   date&timestamp-test
+                                                   )))

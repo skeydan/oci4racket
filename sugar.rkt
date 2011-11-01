@@ -1,8 +1,9 @@
 #lang racket
+(require racket/date)
 (require ffi/unsafe)
 (require "constants.rkt")
 (require "defs.rkt")
-(provide init clean)
+(provide (all-defined-out))
 
 ; initialization and cleanup
 (define (init #:err_handler (err_handler default_err_handler) #:lib (lib #f) #:env (env 'oci_env_default))
@@ -20,6 +21,13 @@
           (geterrpos (errgetstmt err))
           (getsql (errgetstmt err))))
 
-; 
+; events
+(define set-event
+  (case-lambda ((stmt evt level tracefile)
+                (begin (executestmt stmt (string-append "alter session set tracefile_identifier='" tracefile "'"))
+                       (set-event stmt evt level)))
+               ((stmt evt level) (executestmt stmt (string-append "alter session set events '" (number->string evt) " trace name context forever, level " (number->string level) "'")))))
 
+(define (unset-event stmt evt)
+  (executestmt stmt (string-append "alter session set events '" (number->string evt) " trace name context off'")))
 
