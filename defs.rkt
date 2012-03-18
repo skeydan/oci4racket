@@ -36,9 +36,8 @@
 (def-ocilib createstmt OCI_StatementCreate : (conn_ptr : _pointer) -> (stmt_ptr : _pointer))
 (def-ocilib stmtfree OCI_StatementFree : (stmt_ptr : _pointer) -> (result : _bool))
 (def-ocilib prepare OCI_Prepare : (stmt_ptr s) :: (stmt_ptr : _pointer) (sql : _string = (log-sql s 'prepare)) -> (result : _bool))
-
 (def-ocilib execute OCI_Execute : (stmt_ptr : _pointer) -> (result : _bool))
-(def-ocilib executestmt OCI_ExecuteStmt : (stmt_ptr s) :: (stmt_ptr : _pointer) (sql : _string = (log-sql s 'executestmt)) -> (result : _bool)) ; does both of prepare and execute sequentially
+(def-ocilib executestmt OCI_ExecuteStmt : (stmt_ptr s) :: (stmt_ptr : _pointer) (sql : _string = (log-sql s 'executestmt)) -> (result : _bool)) ; does both of prepare and execute in one
 (def-ocilib getsql OCI_GetSql : (stmt_ptr : _pointer) -> (text : _string))
 (def-ocilib geterrpos OCI_GetSqlErrorPos : (stmt_ptr : _pointer) -> (pos : _uint))	
 
@@ -50,7 +49,7 @@
 (def-ocilib errgetinternalcode OCI_ErrorGetInternalCode : (error_ptr : _pointer) -> (code : _int))
 (def-ocilib errgetconn OCI_ErrorGetConnection : (error_ptr : _pointer) -> (conn_ptr : _pointer))
 (def-ocilib errgetrow OCI_ErrorGetRow : (error_ptr : _pointer) -> (code : _uint))
-(def-ocilib errgetlast OCI_GetLastError : (error_ptr : _pointer) -> (code : _int))
+(def-ocilib errgetlast OCI_GetLastError : -> (error_ptr : _pointer))
 
 ; Result sets
 (def-ocilib getfetchsize OCI_GetFetchSize : (stmt_ptr : _pointer) -> (size : _uint))

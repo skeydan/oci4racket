@@ -3,10 +3,16 @@
 (provide (all-defined-out))
 
 (define _ocilib-env-type
-  (_enum '(oci_env_default = 0
+  (_bitmask '(oci_env_default = 0
               oci_env_threaded = 1
               oci_env_context = 2
-              oci_env_events = 3)))
+              oci_env_events = 4)))
+
+;(define _ocilib-env-type
+;  (_enum '(oci_env_default = 0
+;              oci_env_threaded = 1
+;              oci_env_context = 2
+;              oci_env_events = 4)))
 
 (define _ocilib-charset-type
   (_enum '(oci_char_ansi = 1
@@ -14,6 +20,7 @@
 
 (define _ocilib-session-type
   (_enum '(oci_session_default = 0
+              oci_session_xa = 1
               oci_session_sysdba = 2
               oci_session_sysoper = 4
               oci_session_prelim_auth = 8)))
@@ -27,3 +34,4 @@
   (_enum '(oci_timestamp = 1
               oci_timestamp_tz = 2
               oci_timestamp_ltz = 3)))
+
