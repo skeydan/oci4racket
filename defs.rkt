@@ -21,6 +21,9 @@
 (def-ocilib cleanup OCI_Cleanup : -> (result : _bool))
 (def-ocilib getcharsetmetadata OCI_GetCharsetMetaData :	-> (type : _ocilib-charset-type))
 (def-ocilib getcharsetuserdata OCI_GetCharsetUserData :	-> (type : _ocilib-charset-type))
+(def-ocilib getruntimeversion OCI_GetOCIRuntimeVersion	: -> (result : _uint))
+(def-ocilib getcompileversion OCI_GetOCICompileVersion	: -> (result : _uint))
+(def-ocilib getimportmode OCI_GetImportMode : -> (result : _ocilib_import_mode))
 
 ; Connections
 (def-ocilib connect  OCI_ConnectionCreate : (db : _string) (user : _string) (pw : _string) (mode : _ocilib-session-type) -> (conn_ptr : _pointer))
@@ -39,7 +42,9 @@
 (def-ocilib execute OCI_Execute : (stmt_ptr : _pointer) -> (result : _bool))
 (def-ocilib executestmt OCI_ExecuteStmt : (stmt_ptr s) :: (stmt_ptr : _pointer) (sql : _string = (log-sql s 'executestmt)) -> (result : _bool)) ; does both of prepare and execute in one
 (def-ocilib getsql OCI_GetSql : (stmt_ptr : _pointer) -> (text : _string))
-(def-ocilib geterrpos OCI_GetSqlErrorPos : (stmt_ptr : _pointer) -> (pos : _uint))	
+(def-ocilib geterrpos OCI_GetSqlErrorPos : (stmt_ptr : _pointer) -> (pos : _uint))
+(def-ocilib getstatementcachesize OCI_GetStatementCacheSize : (conn_ptr : _pointer) -> (size : _uint))	
+(def-ocilib setstatementcachesize OCI_SetStatementCacheSize : (conn_ptr : _pointer) (size : _uint) -> (result : _bool))
 
 ; Error handling
 (def-ocilib errgetstring OCI_ErrorGetString : (error_ptr : _pointer) -> (text : _string))

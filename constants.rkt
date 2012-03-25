@@ -2,17 +2,16 @@
 (require ffi/unsafe)
 (provide (all-defined-out))
 
+(define _ocilib_import_mode
+  (_enum '(oci-import-mode-linkage = 1
+           oci-import-mode-runtime = 2)))
+         
+
 (define _ocilib-env-type
   (_bitmask '(oci_env_default = 0
               oci_env_threaded = 1
               oci_env_context = 2
               oci_env_events = 4)))
-
-;(define _ocilib-env-type
-;  (_enum '(oci_env_default = 0
-;              oci_env_threaded = 1
-;              oci_env_context = 2
-;              oci_env_events = 4)))
 
 (define _ocilib-charset-type
   (_enum '(oci_char_ansi = 1

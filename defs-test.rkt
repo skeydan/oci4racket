@@ -14,7 +14,16 @@
  "Library metadata"
  (test-case
   "characterset"
-  (check-equal? (getcharsetmetadata) 'oci_char_ansi))))
+  (check-equal? (getcharsetmetadata) 'oci_char_ansi))
+ (test-case
+  "importmode"
+  (check-equal? (getimportmode) 'oci-import-mode-linkage))
+ (test-case
+  "runtime version"
+  (check-equal? (getruntimeversion) 9))
+ (test-case
+  "compile version"
+  (check-equal? (getcompileversion) 9))))
 
 (define connection-test
  (test-suite 
@@ -27,7 +36,10 @@
   (check-not-false conn)
   (check-true (ping conn))
   (check-equal? (apply string-append (add-between (map number->string (list (getmajorversion conn) (getminorversion conn))) ".")) "11.2")
-  (check-not-false (connfree conn)))))
+  (check-true (setstatementcachesize conn 30))
+  (check-equal? (getstatementcachesize conn) 30)
+  (check-not-false (connfree conn)))
+ ))
 
 (define execution-test
  (test-suite
@@ -167,8 +179,8 @@
 (parameterize ((log-level (bitwise-ior 1 2 4)))
   (for-each (lambda (test) (run-tests test)) (list library-metadata-test
                                                    connection-test
-                                                   execution-test
-                                                   fetch-test
-                                                   bind-test
-                                                   date&timestamp-test
+                                                   ;execution-test
+                                                   ;fetch-test
+                                                   ;bind-test
+                                                   ;date&timestamp-test
                                                    )))
